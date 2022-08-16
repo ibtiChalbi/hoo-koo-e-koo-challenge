@@ -1,0 +1,44 @@
+@import '../../assets/sass/main';
+
+.app_container {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 5rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 5rem;
+}
+
+.header {
+  padding: 1rem;
+  max-height: 4.5rem;
+  background-color: $white;
+  position: relative;
+  .metamask_image {
+    height: 6.25rem;
+    position: absolute;
+    left: 0;
+    top: -0.813rem;
+  }
+  .menu_link {
+    margin-right: 0.7rem;
+    background-color: $white;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+    border-radius: 0.25rem;
+    padding-top: 0.5rem;
+    padding-right: 0.625rem;
+    padding-left: 0.625rem;
+    padding-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #25292e;
+    font-weight: 700;
+    svg {
+      margin-right: 0.2rem;
+    }
+    &:hover {
+      transform: scale(1.025);
+    }
+  }
+}
