@@ -1,0 +1,17 @@
+@import '../../assets/sass/main';
+
+.safe_card {
+  padding: 1rem;
+  width: 100%;
+  .safe_card_item {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    .safe_card_sub_title {
+      padding-right: 0.5rem;
+    }
+  }
+}
+
+.add_button {
+  margin-bottom: 1rem;
+}

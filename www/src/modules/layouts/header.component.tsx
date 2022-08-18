@@ -9,6 +9,7 @@ import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import { useAccount } from "wagmi";
 import { useDispatch } from "react-redux";
 import { logout } from "modules/auth/state/auth.actions";
+import LockIcon from "@mui/icons-material/Lock";
 
 const MainHeader = () => {
   const dispatch = useDispatch();
@@ -23,7 +24,11 @@ const MainHeader = () => {
   return (
     <AppBar color="transparent">
       <Grid container justifyContent="flex-end" className={styles.header}>
-        <img src={metamaskImage} className={styles.metamask_image} />
+        <img
+          src={metamaskImage}
+          className={styles.metamask_image}
+          alt="meta mask"
+        />
         <Grid>
           <Grid container justifyContent="flex-end" alignItems="center">
             <Link
@@ -32,6 +37,13 @@ const MainHeader = () => {
             >
               <AccountBalanceIcon />
               Transactions
+            </Link>
+            <Link
+              to={RouterPaths.RootPaths.safePath}
+              className={styles.menu_link}
+            >
+              <LockIcon />
+              Safe
             </Link>
 
             <ConnectButton

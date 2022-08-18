@@ -5,6 +5,7 @@ import MainHeader from "./header.component";
 
 interface LayoutProps {
   children: ReactElement;
+  title: string;
 }
 
 /**
@@ -21,7 +22,10 @@ export const Layout = (props: LayoutProps) => {
   return (
     <Grid container className={styles.app_container}>
       <MainHeader />
-      <Grid container>{props.children}</Grid>
+      <Grid container direction="column">
+        <h1>{props.title}</h1>
+        {props.children}
+      </Grid>
     </Grid>
   );
 };

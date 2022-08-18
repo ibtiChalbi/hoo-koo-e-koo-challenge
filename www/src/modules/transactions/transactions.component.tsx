@@ -1,16 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  CircularProgress,
-  Grid,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import PublishIcon from "@mui/icons-material/Publish";
 import styles from "./transactions.module.scss";
 import { useAccount } from "wagmi";
@@ -18,10 +7,10 @@ import {
   EtherscanProvider,
   TransactionResponse,
 } from "@ethersproject/providers";
-import { formatEther } from "ethers/lib/utils";
-import { RINKEBY_link } from "core/constant";
 import SendTransaction from "./send-transaction.component";
 import Modal from "shared/components/Model/model.component";
+import CustomTable from "shared/components/CustomTable/custom-table.component";
+import { TableHeaderEnum } from "core/enums/table-header/table-header.enum";
 
 const Transactions: React.FC = () => {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
@@ -35,6 +24,7 @@ const Transactions: React.FC = () => {
       await gethistory();
     };
     fetchTransactions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const gethistory = async () => {
@@ -69,77 +59,11 @@ const Transactions: React.FC = () => {
         </Button>
       </Grid>
       <Grid container>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Block</TableCell>
-                <TableCell></TableCell>
-                <TableCell>From</TableCell>
-                <TableCell>To</TableCell>
-                <TableCell>Value</TableCell>
-                <TableCell>Hash</TableCell>
-              </TableRow>
-            </TableHead>
-            {loadingTransactions ? (
-              <TableBody>
-                <TableRow>
-                  <TableCell colSpan={7}>
-                    <Grid container justifyContent="center">
-                      <CircularProgress />
-                    </Grid>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            ) : transactions?.length > 0 ? (
-              <TableBody>
-                {transactions.map((row, index) => (
-                  <TableRow
-                    key={index}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {row.blockNumber}
-                    </TableCell>
-                    <TableCell>
-                      <div className={styles.transaction_button}>
-                        {row.to === address && row.from === address ? (
-                          <div className={styles.self}>self</div>
-                        ) : row.to === address ? (
-                          <div className={styles.in}>in</div>
-                        ) : (
-                          <div className={styles.out}>out</div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={styles.ellipsis}>{row.from}</div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={styles.ellipsis}>{row.to}</div>
-                    </TableCell>
-                    <TableCell>{formatEther(row.value)} Ether</TableCell>
-                    <TableCell>
-                      <a href={`${RINKEBY_link}tx/${row.hash}`} target="blank">
-                        View Transaction
-                      </a>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            ) : (
-              <TableBody>
-                <TableRow>
-                  <TableCell colSpan={7}>
-                    <Grid container justifyContent="center">
-                      No data available try again later
-                    </Grid>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            )}
-          </Table>
-        </TableContainer>
+        <CustomTable
+          list={transactions}
+          loading={loadingTransactions}
+          headers={TableHeaderEnum.transactionsItems}
+        />
       </Grid>
       <Modal
         title="Send funds"

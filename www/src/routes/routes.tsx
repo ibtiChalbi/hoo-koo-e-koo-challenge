@@ -5,6 +5,7 @@ import LoginPage from "pages/login";
 import { RouterPaths } from "core/constant";
 import Homepage from "pages/home";
 import GuardRouter from "shared/guard";
+import SafePage from "pages/safe";
 
 export const RoutesList = () => {
   return (
@@ -13,8 +14,16 @@ export const RoutesList = () => {
         <Route
           path={RouterPaths.RootPaths.rootPath}
           element={
-            <Layout>
+            <Layout title={"Transactions"}>
               <Homepage />
+            </Layout>
+          }
+        />
+        <Route
+          path={RouterPaths.RootPaths.safePath}
+          element={
+            <Layout title={"Safe"}>
+              <SafePage />
             </Layout>
           }
         />

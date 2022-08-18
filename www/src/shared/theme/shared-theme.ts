@@ -6,4 +6,10 @@ export const colors = {
   DARK_BLUE: "#044497",
   HOVER_COLOR: "#0000000a",
   GREY: "#6c757d",
+  DARK_GREY: "#626c76",
+  LIGHTER_GREY: "#77838f33",
+  LIGHT_ORANGE: "#db9a0433",
+  ORANGE: "#b47d00",
+  LIGHT_GREEN: "#00c9a733",
+  GREEN: "#02977e",
 };
