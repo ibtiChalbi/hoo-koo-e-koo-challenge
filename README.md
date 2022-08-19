@@ -45,3 +45,12 @@ The native frontend – the `www` – is a _Reactjs_ application. It uses _Mate
 
 - [React](https://reactjs.org/)
 - [Material-UI](https://mui.com/material-ui)
+
+
+---
+
+# Points to improve
+- saving the multisig data into the MongoDB
+- better use of the custom hooks is recommended at this Points
+-  Add confirm/reject transactions in the safe
+-  Allow user to auto connect to other account in order to use correctly the multi sign
