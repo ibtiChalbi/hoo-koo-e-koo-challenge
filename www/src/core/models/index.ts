@@ -7,3 +7,6 @@ export * from "./auth/sign-up-data";
 
 // transaction models
 export * from "./transaction/send-transaction-data";
+
+//safe
+export * from "./safe/add-safe-data";

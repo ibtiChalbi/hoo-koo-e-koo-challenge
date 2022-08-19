@@ -1,4 +1,4 @@
-@import "../../assets/sass/main";
+@import '../../assets/sass/main';
 
 .safe_card {
   padding: 1rem;
@@ -14,4 +14,9 @@
 
 .add_button {
   margin-bottom: 1rem;
+}
+
+.add_safe_form {
+  width: 100%;
+  padding: 1rem;
 }

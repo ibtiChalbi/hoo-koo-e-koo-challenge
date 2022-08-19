@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import { Button, Grid } from "@mui/material";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
@@ -38,6 +39,7 @@ export const Auth = () => {
       };
       dispatch(register(registerRequest));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, registerData]);
 
   useEffect(() => {
@@ -119,7 +121,7 @@ export const Auth = () => {
         </ConnectButton.Custom>
       </Grid>
       <Grid className={styles.right_side} lg={6} md={7} sm={6} item>
-        <img src={loginImage} />
+        <img src={loginImage} alt="login" />
       </Grid>
     </Grid>
   );

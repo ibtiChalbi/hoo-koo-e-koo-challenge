@@ -10,7 +10,7 @@ import { SelectItemData } from "shared/interfaces";
 import { CircularProgress, Grid, ThemeProvider } from "@mui/material";
 import { tableTheme } from "shared/theme/table-theme";
 import { TableHeaderEnum } from "core/enums/table-header/table-header.enum";
-import { RINKEBY_link } from "core/constant";
+import { CONSTANTS } from "core/constant";
 import { useAccount } from "wagmi";
 import { formatEther } from "ethers/lib/utils";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
@@ -76,9 +76,35 @@ export default function CustomTable(props: CustomTableProps) {
                         key={`table-cell-${indexCell}-${data.name}`}
                         className={data.value}
                       >
-                        {data?.value === TableHeaderEnum.Hash ? (
+                        {data?.value === TableHeaderEnum.Action ? (
+                          <Grid container justifyContent="flex-end">
+                            {props.canView && (
+                              <Button
+                                startIcon={<RemoveRedEyeIcon />}
+                                onClick={props.handleView}
+                                toolTip="Delete"
+                              />
+                            )}
+                            {props.canEdit && (
+                              <Button
+                                startIcon={<EditIcon />}
+                                onClick={props.handleEdit}
+                                toolTip="Edit"
+                              />
+                            )}
+                            {props.canDelete && (
+                              <Button
+                                startIcon={<DeleteIcon />}
+                                onClick={props.handleDelete}
+                                toolTip="Delete"
+                              />
+                            )}
+                          </Grid>
+                        ) : !row[data?.value]?.toString() ? (
+                          "--"
+                        ) : data?.value === TableHeaderEnum.Hash ? (
                           <a
-                            href={`${RINKEBY_link}tx/${row[
+                            href={`${CONSTANTS.rinkebyLink}tx/${row[
                               data?.value
                             ]?.toString()}`}
                             target="blank"
@@ -101,34 +127,24 @@ export default function CustomTable(props: CustomTableProps) {
                           data?.value === TableHeaderEnum.To ||
                           data?.value === TableHeaderEnum.From ? (
                           <a
-                            href={`${RINKEBY_link}address/${row[
+                            href={`${CONSTANTS.rinkebyLink}address/${row[
                               data?.value
                             ]?.toString()}`}
-                            target="blank"
+                            target="_blank"
+                            rel="noreferrer"
                           >
                             {row[data?.value]?.toString()}
                           </a>
-                        ) : data?.value === TableHeaderEnum.Action ? (
-                          <Grid container justifyContent="flex-end">
-                            {props.canView && (
-                              <Button
-                                startIcon={<RemoveRedEyeIcon />}
-                                onClick={props.handleView}
-                              />
-                            )}
-                            {props.canEdit && (
-                              <Button
-                                startIcon={<EditIcon />}
-                                onClick={props.handleEdit}
-                              />
-                            )}
-                            {props.canDelete && (
-                              <Button
-                                startIcon={<DeleteIcon />}
-                                onClick={props.handleDelete}
-                              />
-                            )}
-                          </Grid>
+                        ) : data?.value === TableHeaderEnum.Transaction ? (
+                          <a
+                            href={`${CONSTANTS.rinkebyLink}tx/${row[
+                              data?.value
+                            ]?.toString()}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {row[data?.value]?.toString()}
+                          </a>
                         ) : (
                           row[data?.value]?.toString()
                         )}

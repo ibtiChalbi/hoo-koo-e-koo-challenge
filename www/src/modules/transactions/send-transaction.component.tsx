@@ -49,12 +49,14 @@ const SendTransaction: React.FC<SendTransactionProps> = ({
     } else if (!isLoading) {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, isSuccess]);
 
   useEffect(() => {
     if (requestData && requestData?.address) {
       sendTransaction?.();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestData]);
 
   return (

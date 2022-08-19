@@ -11,6 +11,9 @@ export enum TableHeaderEnum {
   Address = "address",
   Name = "name",
   Action = "action",
+  Method = "method",
+  Transaction = "transaction",
+  Status = "status",
 }
 
 export namespace TableHeaderEnum {
@@ -22,10 +25,17 @@ export namespace TableHeaderEnum {
     TableHeaderEnum.Value,
     TableHeaderEnum.Hash,
   ];
+
   const ownersHeaders: TableHeaderEnum[] = [
     TableHeaderEnum.Address,
     TableHeaderEnum.Name,
     TableHeaderEnum.Action,
+  ];
+
+  const safeTransactionsHeaders: TableHeaderEnum[] = [
+    TableHeaderEnum.Transaction,
+    TableHeaderEnum.Method,
+    TableHeaderEnum.Status,
   ];
 
   export const toString = new IMap<TableHeaderEnum, string>([
@@ -37,6 +47,9 @@ export namespace TableHeaderEnum {
     [TableHeaderEnum.Channel, ""],
     [TableHeaderEnum.Address, "Address"],
     [TableHeaderEnum.Name, "Name"],
+    [TableHeaderEnum.Method, "Method"],
+    [TableHeaderEnum.Transaction, "Transaction"],
+    [TableHeaderEnum.Status, "Status"],
   ]);
 
   export function mapToSelectItem(
@@ -51,6 +64,10 @@ export namespace TableHeaderEnum {
   export const ownersItems = ownersHeaders.map((item) => mapToSelectItem(item));
 
   export const transactionsItems = transactionsHeaders.map((item) =>
+    mapToSelectItem(item)
+  );
+
+  export const safeTransactionsItems = safeTransactionsHeaders.map((item) =>
     mapToSelectItem(item)
   );
 }

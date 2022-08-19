@@ -3,6 +3,7 @@ import {
   Button as MaterialButton,
   CircularProgress,
   IconButton,
+  Tooltip,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -25,6 +26,7 @@ declare type ButtonHtmlType = "submit" | "reset" | "button";
 interface ButtonProps {
   label?: string;
   labelClass?: string;
+  toolTip?: string;
   startIcon?: JSX.Element;
   endIcon?: JSX.Element;
   disabled?: boolean;
@@ -77,18 +79,20 @@ export function Button(props: ButtonProps): JSX.Element {
   }
   return (
     <ThemeProvider theme={buttonTheme}>
-      <IconButton
-        color={props.type}
-        disabled={props.disabled}
-        className={props.className}
-        onClick={props.onClick}
-      >
-        {props.spinning ? (
-          <CircularProgress size={20} color="inherit" />
-        ) : (
-          props.startIcon && { ...props.startIcon }
-        )}
-      </IconButton>
+      <Tooltip title={props.toolTip || ""}>
+        <IconButton
+          color={props.type}
+          disabled={props.disabled}
+          className={props.className}
+          onClick={props.onClick}
+        >
+          {props.spinning ? (
+            <CircularProgress size={20} color="inherit" />
+          ) : (
+            props.startIcon && { ...props.startIcon }
+          )}
+        </IconButton>
+      </Tooltip>
     </ThemeProvider>
   );
 }

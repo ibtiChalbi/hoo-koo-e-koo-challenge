@@ -8,14 +8,14 @@ import {
   TransactionResponse,
 } from "@ethersproject/providers";
 import SendTransaction from "./send-transaction.component";
-import Modal from "shared/components/Model/model.component";
+import Modal from "shared/components/Modal/modal.component";
 import CustomTable from "shared/components/CustomTable/custom-table.component";
 import { TableHeaderEnum } from "core/enums/table-header/table-header.enum";
 
 const Transactions: React.FC = () => {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
   const [loadingTransactions, setloadingTransactions] = useState(true);
-  const [openSendModel, setopenSendModel] = useState(false);
+  const [openSendModal, setopenSendModal] = useState(false);
   const { address } = useAccount();
   const provider = new EtherscanProvider("rinkeby");
 
@@ -40,10 +40,10 @@ const Transactions: React.FC = () => {
     }
   };
 
-  const handleOpen = () => setopenSendModel(true);
-  const handleClose = () => setopenSendModel(false);
+  const handleOpen = () => setopenSendModal(true);
+  const handleClose = () => setopenSendModal(false);
   const transactionDone = async () => {
-    setopenSendModel(false);
+    setopenSendModal(false);
     gethistory();
   };
 
@@ -65,13 +65,7 @@ const Transactions: React.FC = () => {
           headers={TableHeaderEnum.transactionsItems}
         />
       </Grid>
-      <Modal
-        title="Send funds"
-        open={openSendModel}
-        handleClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+      <Modal title="Send funds" open={openSendModal} handleClose={handleClose}>
         <SendTransaction transactionDone={transactionDone} />
       </Modal>
     </Grid>
