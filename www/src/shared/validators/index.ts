@@ -18,4 +18,14 @@ export namespace Validators {
 
   export const isEthereumAddress = (message: string) => (value: string) =>
     isAddress(value) ? "" : message;
+
+  export const isEthereumArray = (value: string[]) =>
+    !value.find((elem) => isAddress(elem));
+
+  export const arrayNotEmpty = (value: string[]) => value.includes("");
+
+  export const checkForDuplicates = (value: string[]) =>
+    value.filter((item, index, array) => {
+      return array.findIndex((t) => t === item) === index;
+    }).length !== value.length;
 }

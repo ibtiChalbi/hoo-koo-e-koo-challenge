@@ -2,6 +2,7 @@ export interface AddSafeData {
   name: string;
   address?: string;
   threshold: number | undefined;
+  owners?: string[];
 }
 
 export namespace AddSafeData {
@@ -10,6 +11,7 @@ export namespace AddSafeData {
       name: data.name,
       address: data.address,
       threshold: data.threshold,
+      owners: data.owners,
     };
   }
 }

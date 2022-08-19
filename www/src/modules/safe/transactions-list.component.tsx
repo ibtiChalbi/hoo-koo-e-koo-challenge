@@ -8,7 +8,6 @@ import {
   EthereumTxWithTransfersResponse,
   SafeMultisigTransactionResponse,
 } from "@gnosis.pm/safe-service-client";
-import { useAccount } from "wagmi";
 
 interface TransactionsListProps {
   transactions: Array<
@@ -18,20 +17,15 @@ interface TransactionsListProps {
     | SafeMultisigTransactionResponse
   >;
   loading: boolean;
-  handleAccept?: (data: string) => void;
-  handleReject?: (data: string) => void;
+  isQueue?: boolean;
 }
 
 const TransactionsList: React.FC<TransactionsListProps> = (
   props: TransactionsListProps
 ) => {
-  const { address } = useAccount();
-
   return (
     <Grid container justifyContent="center">
       <CustomTable
-        canConfirm
-        canReject
         list={props.transactions.map((transaction: any) => ({
           method:
             transaction.dataDecoded?.method || "On-chain rejection created",
@@ -40,22 +34,14 @@ const TransactionsList: React.FC<TransactionsListProps> = (
             ? 0
             : transaction.dataDecoded
             ? 1
-            : !transaction.confirmations?.find((x: any) => x.owner === address)
-            ? 2
             : -1,
-          confirmations: transaction.confirmationsRequired
-            ? `${transaction.confirmations?.length}/${
-                !transaction.isSuccessful || transaction.dataDecoded
-                  ? transaction.confirmationsRequired
-                  : transaction.confirmationsRequired +
-                    transaction.confirmations?.length
-              }`
-            : "",
         }))}
         loading={props.loading}
-        headers={TableHeaderEnum.safeTransactionsItems}
-        handleAccept={(data) => props.handleAccept?.(data?.transaction)}
-        handleReject={(data) => props.handleReject?.(data?.transaction)}
+        headers={
+          props.isQueue
+            ? TableHeaderEnum.safePendingTransactionsItems
+            : TableHeaderEnum.safeTransactionsItems
+        }
       />
     </Grid>
   );

@@ -10,6 +10,7 @@ interface AddSafeProps {
   connectSafe: (value: AddSafeData) => void;
   createSafe: (value: AddSafeData) => void;
   connectLoading: boolean;
+  defaultAddress: string;
 }
 
 const AddSafe: React.FC<AddSafeProps> = (props: AddSafeProps) => {
@@ -26,6 +27,11 @@ const AddSafe: React.FC<AddSafeProps> = (props: AddSafeProps) => {
                   type={SafeFormTypes.CreateSafe}
                   submit={props.createSafe}
                   connectLoading={props.connectLoading}
+                  initialData={{
+                    name: "",
+                    threshold: 1,
+                    owners: [props.defaultAddress],
+                  }}
                 />
               ),
             },

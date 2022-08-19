@@ -17,8 +17,6 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import EditIcon from "@mui/icons-material/Edit";
 import { Button } from "../Button/button.component";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 
 interface CustomTableProps {
   list: any[];
@@ -32,8 +30,6 @@ interface CustomTableProps {
   handleView?: (data: any) => void;
   handleEdit?: (data: any) => void;
   handleDelete?: (data: any) => void;
-  handleAccept?: (data: any) => void;
-  handleReject?: (data: any) => void;
 }
 
 /**
@@ -105,22 +101,6 @@ export default function CustomTable(props: CustomTableProps) {
                                 toolTip="Delete"
                               />
                             )}
-                            {props.canConfirm &&
-                              row[TableHeaderEnum.Status] > 1 && (
-                                <Button
-                                  startIcon={<DoneRoundedIcon />}
-                                  onClick={() => props.handleAccept?.(row)}
-                                  toolTip="Confirm"
-                                />
-                              )}
-                            {props.canReject &&
-                              row[TableHeaderEnum.Status] > 1 && (
-                                <Button
-                                  startIcon={<CloseRoundedIcon />}
-                                  onClick={() => props.handleReject?.(row)}
-                                  toolTip="Reject"
-                                />
-                              )}
                           </Grid>
                         ) : !row[data?.value]?.toString() ? (
                           "--"
@@ -168,13 +148,7 @@ export default function CustomTable(props: CustomTableProps) {
                             {row[data?.value]?.toString()}
                           </a>
                         ) : data?.value === TableHeaderEnum.Status ? (
-                          row[data?.value] < 0 ? (
-                            <div className="pending">Needs confirmation</div>
-                          ) : row[data?.value] > 1 ? (
-                            <div className="pending">
-                              Needs your confirmation
-                            </div>
-                          ) : row[data?.value] > 0 ? (
+                          row[data?.value] ? (
                             <div className="success"> Success</div>
                           ) : (
                             <div className="rejected"> Rejected</div>

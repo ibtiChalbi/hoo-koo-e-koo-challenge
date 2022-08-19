@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Form, Input } from "shared/components";
+import { Button, Form, Input, InputList } from "shared/components";
 import { Field } from "react-final-form";
 import { CreateSafeFormNamesEnum, FormIdEnum, SafeFormTypes } from "core/enums";
 import { Validators } from "shared/validators";
@@ -43,7 +43,7 @@ const SafeForm: React.FC<SafeFormProps> = (props: SafeFormProps) => {
           )}
         </Field>
       )}
-      {props.type !== SafeFormTypes.EditSafe && (
+      {props.type === SafeFormTypes.ConnectSafe && (
         <Field
           name={CreateSafeFormNamesEnum.field.getValue(
             CreateSafeFormNamesEnum.Address
@@ -69,7 +69,8 @@ const SafeForm: React.FC<SafeFormProps> = (props: SafeFormProps) => {
           )}
         </Field>
       )}
-      {props.type === SafeFormTypes.EditSafe && (
+      {(props.type === SafeFormTypes.EditSafe ||
+        props.type === SafeFormTypes.CreateSafe) && (
         <Field
           name={CreateSafeFormNamesEnum.field.getValue(
             CreateSafeFormNamesEnum.Threshold
@@ -96,6 +97,35 @@ const SafeForm: React.FC<SafeFormProps> = (props: SafeFormProps) => {
           )}
         </Field>
       )}
+
+      {props.type === SafeFormTypes.CreateSafe && (
+        <Field
+          name={CreateSafeFormNamesEnum.field.getValue(
+            CreateSafeFormNamesEnum.Owners
+          )}
+          validate={(value: string[]) =>
+            Validators.arrayNotEmpty(value) ||
+            Validators.isEthereumArray(value) ||
+            Validators.checkForDuplicates(value)
+          }
+        >
+          {(field) => (
+            <InputList
+              max={50}
+              inputLabel={CreateSafeFormNamesEnum.toLabel.getValue(
+                CreateSafeFormNamesEnum.Owners
+              )}
+              label={"Owners"}
+              placeholder={CreateSafeFormNamesEnum.toPlaceholder.getValue(
+                CreateSafeFormNamesEnum.Owners
+              )}
+              meta={field.meta}
+              input={field.input}
+            />
+          )}
+        </Field>
+      )}
+
       <Button
         htmlType="submit"
         type="secondary"

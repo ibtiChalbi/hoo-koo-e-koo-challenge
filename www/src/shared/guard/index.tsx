@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { localStorageKeys, RouterPaths } from "core/constant";
 import { history } from "core/services/history.service";
 import { LinearProgress } from "@mui/material";
 import jwt_decode from "jwt-decode";
+import { Routes } from "react-router-dom";
 
 interface GuardRouterProps {
   children: React.ReactNode;
 }
 const GuardRouter = ({ children }: GuardRouterProps) => {
-  const dispatch = useDispatch();
   const [canAccess, setCanAccess] = useState(false);
 
   useEffect(() => {
@@ -56,11 +55,7 @@ const GuardRouter = ({ children }: GuardRouterProps) => {
     })();
   }, []);
 
-  if (canAccess) {
-    return <>{children}</>;
-  } else {
-    return <LinearProgress />;
-  }
+  return canAccess ? <Routes>{children}</Routes> : <LinearProgress />;
 };
 
 export default GuardRouter;
