@@ -16,6 +16,7 @@ type ModelProperties = {
   title?: string;
   confirmation?: boolean;
   handleConfirm?: () => void;
+  loading?: boolean;
 };
 const Modal: React.FC<ModelProperties> = ({
   open,
@@ -24,6 +25,7 @@ const Modal: React.FC<ModelProperties> = ({
   title,
   confirmation,
   handleConfirm,
+  loading,
 }) => {
   return (
     <Dialog
@@ -51,12 +53,15 @@ const Modal: React.FC<ModelProperties> = ({
             label="Cancel"
             size="large"
             onClick={handleClose}
+            disabled={loading}
           />
           <Button
             type="secondary"
             label="Confirm"
             size="large"
             onClick={() => handleConfirm?.()}
+            disabled={loading}
+            spinning={loading}
           />
         </DialogActions>
       )}

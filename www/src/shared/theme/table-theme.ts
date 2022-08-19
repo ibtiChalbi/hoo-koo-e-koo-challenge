@@ -71,6 +71,18 @@ export const tableTheme = createTheme({
           "a,circle": {
             color: colors.PRIMARY_BLUE,
           },
+          ".success": {
+            color: colors.GREEN,
+            fontWeight: "bold",
+          },
+          ".pending": {
+            color: colors.ORANGE,
+            fontWeight: "bold",
+          },
+          ".rejected": {
+            color: colors.RED,
+            fontWeight: "bold",
+          },
         },
       },
     },

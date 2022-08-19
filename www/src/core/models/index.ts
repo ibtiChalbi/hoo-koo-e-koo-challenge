@@ -10,3 +10,6 @@ export * from "./transaction/send-transaction-data";
 
 //safe
 export * from "./safe/add-safe-data";
+
+//owner
+export * from "./owner/owner-data";

@@ -14,6 +14,7 @@ export enum TableHeaderEnum {
   Method = "method",
   Transaction = "transaction",
   Status = "status",
+  Confirmations = "confirmations",
 }
 
 export namespace TableHeaderEnum {
@@ -35,7 +36,9 @@ export namespace TableHeaderEnum {
   const safeTransactionsHeaders: TableHeaderEnum[] = [
     TableHeaderEnum.Transaction,
     TableHeaderEnum.Method,
+    TableHeaderEnum.Confirmations,
     TableHeaderEnum.Status,
+    TableHeaderEnum.Action,
   ];
 
   export const toString = new IMap<TableHeaderEnum, string>([
@@ -50,6 +53,7 @@ export namespace TableHeaderEnum {
     [TableHeaderEnum.Method, "Method"],
     [TableHeaderEnum.Transaction, "Transaction"],
     [TableHeaderEnum.Status, "Status"],
+    [TableHeaderEnum.Confirmations, "Confirmations"],
   ]);
 
   export function mapToSelectItem(

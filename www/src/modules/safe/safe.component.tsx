@@ -12,10 +12,11 @@ import { openSnackbar } from "modules/snackbar/state/snackbar.actions";
 import { useDispatch } from "react-redux";
 import { JsonRpcFetchFunc } from "@ethersproject/providers";
 import Modal from "shared/components/Modal/modal.component";
-import { AddSafeData } from "core/models";
+import { AddSafeData, OwnerData } from "core/models";
 import SafeServiceClient, {
   EthereumTxWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
+  SafeMultisigTransactionResponse,
   SafeMultisigTransactionWithTransfersResponse,
 } from "@gnosis.pm/safe-service-client";
 import SafeForm from "./safe-form.component";
@@ -23,6 +24,7 @@ import CustomTabs from "shared/components/CustomTabs/custom-tabs.component";
 import OwnersList from "./owners-list.component";
 import { SafeFormTypes } from "core/enums";
 import TransactionsList from "./transactions-list.component";
+import OwnerForm from "./owner-form.component";
 
 const SafeDetails: React.FC = () => {
   const [owners, setOwners] = useState<{ name: string; address: string }[]>([]);
@@ -33,6 +35,9 @@ const SafeDetails: React.FC = () => {
       | EthereumTxWithTransfersResponse
     >
   >([]);
+  const [pendingTransactions, setPendingTransactions] = useState<
+    Array<SafeMultisigTransactionResponse>
+  >([]);
   const [safeSdk, setSafeSdk] = useState<Safe | null>(null);
   const [threshold, setThreshold] = useState<number>(0);
   const [balance, setBalance] = useState<string>("");
@@ -41,9 +46,18 @@ const SafeDetails: React.FC = () => {
   const [safeOwnersLoading, setSafeOwnersLoading] = useState(true);
   const [safeDataLoading, setSafeDataLoading] = useState(true);
   const [transactionsLoading, setTransactionsLoading] = useState(true);
+  const [pendingTransactionsLoading, setPendingTransactionsLoading] =
+    useState(true);
   const [connectionLoading, setConnectionLoading] = useState(false);
   const [disconnectModal, setDisconnectModal] = useState(false);
+  const [editOwnerLoading, setEditOwnerLoading] = useState(false);
   const [editModal, setEditModal] = useState(false);
+  const [editSafeLoading, setEditSafeLoading] = useState(false);
+  const [editOwnerModal, setEditOwnerModal] = useState(false);
+  const [addOwnerModal, setAddOwnerModal] = useState(false);
+  const [deleteOwnerModal, setDeleteOwnerModal] = useState(false);
+  const [ownerToDelete, setOwnerToDelete] = useState("");
+  const [ownertoEdit, setOwnertoEdit] = useState<OwnerData | null>(null);
   const { address } = useAccount();
   const dispatch = useDispatch();
 
@@ -120,6 +134,10 @@ const SafeDetails: React.FC = () => {
         address: owner,
       };
     });
+    localStorage.setItem(
+      localStorageKeys.safeWallets,
+      JSON.stringify(ownersData)
+    );
     setOwners(ownersData || []);
     setSafeOwnersLoading(false);
   };
@@ -131,6 +149,110 @@ const SafeDetails: React.FC = () => {
     console.log(pendingTxs);
     setTransactions(pendingTxs?.results);
     setTransactionsLoading(false);
+  };
+
+  const getPendingTransactions = async () => {
+    setPendingTransactionsLoading(true);
+
+    const pendingTxs = await safeService.getPendingTransactions(safeAddress);
+    console.log(pendingTxs);
+    setPendingTransactions(pendingTxs?.results);
+    setPendingTransactionsLoading(false);
+  };
+
+  const handleAccept = async (hash: string) => {
+    if (safeSdk) {
+      let signature = await safeSdk.approveTransactionHash(hash);
+      await signature.transactionResponse?.wait();
+
+      // const executeTxResponse = await safeSdk.executeTransaction(tx);
+    }
+  };
+
+  const handleReject = async (hash: string) => {
+    if (safeSdk) {
+      // const executeTxResponse = await safeSdk.executeTransaction(tx);
+    }
+  };
+
+  const handledeleteOwner = (value: string) => {
+    setOwnerToDelete(value);
+    handleOpenDeleteOwnerModal();
+  };
+
+  const deleteOwner = async () => {
+    setEditOwnerLoading(true);
+    if (safeSdk) {
+      try {
+        const removeOwnerResponse = await safeSdk.getRemoveOwnerTx({
+          ownerAddress: ownerToDelete,
+          threshold,
+        });
+
+        await safeSdk.executeTransaction(removeOwnerResponse);
+        const ownersData = owners.filter(function (item) {
+          return item.address !== ownerToDelete;
+        });
+        setOwners(ownersData);
+        localStorage.setItem(
+          localStorageKeys.safeWallets,
+          JSON.stringify(ownersData)
+        );
+      } catch (error) {
+        console.log(error);
+        setEditOwnerLoading(false);
+      }
+    }
+    handleCloseDeleteOwnerModal();
+    setEditOwnerLoading(false);
+  };
+
+  const handleupdateOwnerModal = async (value: OwnerData) => {
+    setOwnertoEdit(value);
+    handleOpenEditOwnerModal();
+  };
+
+  const updateOwner = async (data: OwnerData) => {
+    setEditOwnerLoading(true);
+    const ownersData = owners.map((owner) => ({
+      ...owner,
+      name: owner.address === ownertoEdit?.address ? data?.name : owner.name,
+    }));
+    localStorage.setItem(
+      localStorageKeys.safeWallets,
+      JSON.stringify(ownersData)
+    );
+    setOwners([...ownersData]);
+    handleCloseEditOwnerModal();
+    setOwnertoEdit(null);
+    setEditOwnerLoading(false);
+  };
+
+  const addOwner = async (data: OwnerData) => {
+    setEditOwnerLoading(true);
+    try {
+      const addOwnerResponse = await safeSdk?.getAddOwnerTx({
+        ownerAddress: data.address,
+      });
+      if (addOwnerResponse) {
+        const executeTxResponse = await safeSdk?.executeTransaction(
+          addOwnerResponse
+        );
+        if (executeTxResponse) {
+          const ownersList = [data, ...owners];
+          setOwners(ownersList);
+          localStorage.setItem(
+            localStorageKeys.safeWallets,
+            JSON.stringify(ownersList)
+          );
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      setEditOwnerLoading(false);
+    }
+    handleCloseAddOwnerModal();
+    setEditOwnerLoading(false);
   };
 
   const getSafeData = async () => {
@@ -192,25 +314,34 @@ const SafeDetails: React.FC = () => {
   };
 
   const updateSafe = async (data: AddSafeData) => {
-    console.log(data);
+    setEditSafeLoading(true);
     if (safeSdk) {
-      const thresholdTx = await safeSdk.getChangeThresholdTx(
-        data?.threshold || 0
-      );
-      const safeTxHash = await safeSdk.getTransactionHash(thresholdTx);
-      console.log("safeService", safeService);
-      const senderSignature = await safeSdk.signTransactionHash(safeTxHash);
-      await safeService.proposeTransaction({
-        safeAddress,
-        safeTransactionData: thresholdTx.data,
-        safeTxHash,
-        senderAddress: address || "",
-        senderSignature: senderSignature.data,
-        origin,
-      });
+      try {
+        const thresholdTx = await safeSdk.getChangeThresholdTx(
+          data?.threshold || 0
+        );
+        const safeTxHash = await safeSdk.getTransactionHash(thresholdTx);
+        const senderSignature = await safeSdk.signTransactionHash(safeTxHash);
+        await safeService.proposeTransaction({
+          safeAddress,
+          safeTransactionData: thresholdTx.data,
+          safeTxHash,
+          senderAddress: address || "",
+          senderSignature: senderSignature.data,
+          origin,
+        });
 
-      handleCloseEditModal();
+        await safeSdk.executeTransaction(thresholdTx);
+
+        setThreshold(data?.threshold || threshold);
+
+        handleCloseEditModal();
+      } catch (error) {
+        console.log(error);
+        setEditSafeLoading(false);
+      }
     }
+    setEditSafeLoading(false);
   };
 
   const handleOpenDisconnectModal = () => setDisconnectModal(true);
@@ -218,6 +349,15 @@ const SafeDetails: React.FC = () => {
 
   const handleOpenEditModal = () => setEditModal(true);
   const handleCloseEditModal = () => setEditModal(false);
+
+  const handleOpenEditOwnerModal = () => setEditOwnerModal(true);
+  const handleCloseEditOwnerModal = () => setEditOwnerModal(false);
+
+  const handleOpenAddOwnerModal = () => setAddOwnerModal(true);
+  const handleCloseAddOwnerModal = () => setAddOwnerModal(false);
+
+  const handleOpenDeleteOwnerModal = () => setDeleteOwnerModal(true);
+  const handleCloseDeleteOwnerModal = () => setDeleteOwnerModal(false);
 
   const disconnectSafe = async () => {
     localStorage.removeItem(localStorageKeys.safeAddress);
@@ -260,11 +400,23 @@ const SafeDetails: React.FC = () => {
         await getSafeData();
         await getOwners();
         await getTransactions();
+        await getPendingTransactions();
       };
       fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [safeSdk]);
+
+  useEffect(() => {
+    if (safeAddress) {
+      const reconnectSafe = async () => {
+        await connectSafe(safeAddress);
+      };
+      reconnectSafe();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address]);
 
   return (
     <Grid container direction="column">
@@ -306,7 +458,13 @@ const SafeDetails: React.FC = () => {
                 {
                   title: "Owners",
                   content: (
-                    <OwnersList owners={owners} loading={safeOwnersLoading} />
+                    <OwnersList
+                      owners={owners}
+                      loading={safeOwnersLoading}
+                      handleDelete={handledeleteOwner}
+                      handleUpdate={handleupdateOwnerModal}
+                      handleAddOwner={handleOpenAddOwnerModal}
+                    />
                   ),
                 },
                 {
@@ -315,6 +473,17 @@ const SafeDetails: React.FC = () => {
                     <TransactionsList
                       transactions={transactions}
                       loading={transactionsLoading}
+                    />
+                  ),
+                },
+                {
+                  title: "Queue",
+                  content: (
+                    <TransactionsList
+                      transactions={pendingTransactions}
+                      loading={pendingTransactionsLoading}
+                      handleAccept={(hash) => handleAccept(hash)}
+                      handleReject={(hash) => handleReject(hash)}
                     />
                   ),
                 },
@@ -333,6 +502,16 @@ const SafeDetails: React.FC = () => {
         <>Are you sure you want to disconnect this safe ?</>
       </Modal>
       <Modal
+        confirmation
+        title="Confirmation"
+        open={deleteOwnerModal}
+        handleClose={handleCloseDeleteOwnerModal}
+        handleConfirm={deleteOwner}
+        loading={editOwnerLoading}
+      >
+        <>Are you sure you want to delete this owner ?</>
+      </Modal>
+      <Modal
         title="Edit Safe"
         open={editModal}
         handleClose={handleCloseEditModal}
@@ -345,7 +524,30 @@ const SafeDetails: React.FC = () => {
             name: title,
             threshold,
           }}
-          connectLoading={false}
+          connectLoading={editSafeLoading}
+        />
+      </Modal>
+      <Modal
+        title="Edit Owner"
+        open={editOwnerModal}
+        handleClose={handleCloseEditOwnerModal}
+      >
+        <OwnerForm
+          submit={updateOwner}
+          initialData={ownertoEdit}
+          loading={editOwnerLoading}
+        />
+      </Modal>
+      <Modal
+        title="Edit Owner"
+        open={addOwnerModal}
+        handleClose={handleCloseAddOwnerModal}
+      >
+        <OwnerForm
+          submit={addOwner}
+          initialData={{ name: "", address: "" }}
+          loading={editOwnerLoading}
+          type={SafeFormTypes.CreateSafe}
         />
       </Modal>
     </Grid>
